@@ -1,0 +1,35 @@
+services:
+  app-back:
+    image: clinica-odonto/app
+    networks:
+      - vet-network
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+    ports:
+      - 80:3000
+
+  postgres:
+    image: postgres
+    hostname: database
+    networks:
+      - vet-network
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: vet
+    healthcheck:
+      test: [  "CMD", "pg_isready", "-q", "-d", "-U", "root" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgresql.conf:/docker-entrypoint-initdb.d/postgresql.conf
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  
+networks:
+  vet-network:
+    driver: bridge

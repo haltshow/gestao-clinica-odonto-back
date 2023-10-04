@@ -1,0 +1,3 @@
+class AppointmentEntity {
+    constructor() {}
+}
